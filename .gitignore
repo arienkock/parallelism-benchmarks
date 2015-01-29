@@ -4,3 +4,8 @@ pom.xml.releaseBackup
 pom.xml.versionsBackup
 pom.xml.next
 release.properties
+.classpath
+.project
+.settings/
+parallelismbenchmarktestdata.txt
+quasar-core-*.jar
