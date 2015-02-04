@@ -93,6 +93,30 @@
 					</execution>
 				</executions>
 			</plugin>
+			 <!-- <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <configuration>
+                            <target>
+                                <taskdef name="scanSuspendables"
+                                         classname="co.paralleluniverse.fibers.instrument.SuspendablesScanner"
+                                         classpathref="maven.dependency.classpath"/>
+                                <scanSuspendables auto="false" suspendablesFile="target/classes/META-INF/suspendables">
+                                    <fileset dir="target/classes/"/>
+                                </scanSuspendables>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin> -->
 		</plugins>
 		<pluginManagement>
 			<plugins>
