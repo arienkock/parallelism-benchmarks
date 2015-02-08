@@ -3,16 +3,14 @@ package com.github.arienkock;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 
-import co.paralleluniverse.fibers.SuspendExecution;
-
 @SuppressWarnings("serial")
 public class CountWordsForkTask extends RecursiveTask<Integer>{
 	CountWordsTask task;
-	public CountWordsForkTask(LineSourceI reader, int batchSize) {
+	public CountWordsForkTask(StringSourceI reader, int batchSize) {
 		task = new CountWordsTask(reader, batchSize) {
 			ForkJoinTask<Integer> nextTask;
 			@Override
-			protected void startNextTast(LineSourceI reader, int batchSize) {
+			protected void startNextTast(StringSourceI reader, int batchSize) {
 				nextTask = new CountWordsForkTask(reader, batchSize).fork();
 			}
 			
@@ -27,7 +25,7 @@ public class CountWordsForkTask extends RecursiveTask<Integer>{
 	protected Integer compute() {
 		try {
 			return task.work();
-		} catch (SuspendExecution e) {
+		} catch (Throwable e) {
 			throw new AssertionError();
 		}
 	}

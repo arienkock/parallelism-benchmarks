@@ -9,10 +9,10 @@ import co.paralleluniverse.fibers.SuspendExecution;
 
 public abstract class CountWordsTask {
 	private static Pattern whitespace = Pattern.compile("[\\s]+");
-	private LineSourceI reader;
+	private StringSourceI reader;
 	private int batchSize;
 	
-	public CountWordsTask(LineSourceI reader, int batchSize) {
+	public CountWordsTask(StringSourceI reader, int batchSize) {
 		this.reader = reader;
 		this.batchSize = batchSize;
 	}
@@ -21,7 +21,7 @@ public abstract class CountWordsTask {
 		try {
 			ArrayDeque<CharSequence> deque = new ArrayDeque<>();
 			CharSequence line = null;
-			while ((line = reader.readLine())!=null && deque.size() < batchSize) {
+			while ((line = reader.readString())!=null && deque.size() < batchSize) {
 				deque.add(line);
 			}
 			if (deque.size() == 0) {
@@ -48,5 +48,5 @@ public abstract class CountWordsTask {
 	}
 	
 	protected abstract int getNextTaskResult() throws ExecutionException, InterruptedException; //nextTask.join()
-	protected abstract void startNextTast(LineSourceI reader, int batchSize); //	ForkJoinTask<Integer> nextTask = new CountWorksTask(reader, batchSize).fork();
+	protected abstract void startNextTast(StringSourceI reader, int batchSize); //	ForkJoinTask<Integer> nextTask = new CountWorksTask(reader, batchSize).fork();
 }

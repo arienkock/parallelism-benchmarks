@@ -1,29 +1,19 @@
 package com.github.arienkock;
 
-import java.nio.charset.Charset;
-import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
 
-import co.paralleluniverse.fibers.*;
+import co.paralleluniverse.fibers.Fiber;
+import co.paralleluniverse.fibers.SuspendExecution;
 
 @SuppressWarnings("serial")
 public class CountWordsFiber extends Fiber<Integer>{
-	CountWordsTask task;
-	private Path path;
-	private Charset cs;
-	private int batchSize;
+	private CountWordsTask task;
 	
-	public CountWordsFiber(Path path, Charset cs, int batchSize) {
-		this.path = path;
-		this.cs = cs;
-		this.batchSize = batchSize;
-	}
-	
-	public CountWordsFiber(LineSourceI reader, int batchSize) {
+	public CountWordsFiber(StringSourceI reader, int batchSize) {
 		task = new CountWordsTask(reader, batchSize) {
 			Fiber<Integer> nextTask;
 			@Override
-			protected void startNextTast(LineSourceI reader, int batchSize) {
+			protected void startNextTast(StringSourceI reader, int batchSize) {
 				nextTask = new CountWordsFiber(reader, batchSize).start();
 			}
 			
@@ -35,22 +25,8 @@ public class CountWordsFiber extends Fiber<Integer>{
 	}
 
 	@Override
-	@Suspendable
-	public Integer run() throws SuspendExecution, InterruptedException {
-		if (task == null) {
-			task = new CountWordsTask(new LineSource(path, cs), batchSize) {
-				Fiber<Integer> nextTask;
-				@Override
-				protected void startNextTast(LineSourceI reader, int batchSize) {
-					nextTask = new CountWordsFiber(reader, batchSize).start();
-				}
-				
-				@Override
-				protected int getNextTaskResult() throws ExecutionException, InterruptedException {
-					return nextTask.get();
-				}
-			};
-		}
+	protected Integer run() throws SuspendExecution, InterruptedException {
 		return task.work();
 	}
+	
 }

@@ -31,9 +31,12 @@
 
 package com.github.arienkock;
 
-import java.io.*;
-import java.nio.channels.Channels;
-import java.nio.charset.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -44,13 +47,17 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.TearDown;
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
 import co.paralleluniverse.fibers.io.FiberFileChannel;
 import co.paralleluniverse.strands.SuspendableRunnable;
 
+@SuppressWarnings("serial")
 @State(Scope.Benchmark)
 public class ParallelismBenchmark {
 
@@ -63,6 +70,7 @@ public class ParallelismBenchmark {
 			.toFile(), "parallelismbenchmarktestdata.txt");
 	private Pattern whitespace = Pattern.compile("[\\s]+");
 	private AtomicInteger cachedResult = new AtomicInteger(0);
+	public static final int BUFFER_SIZE = 200;
 
 	public ParallelismBenchmark() {
 		if (!testFile.exists() || testFile.length() == 0) {
@@ -98,50 +106,113 @@ public class ParallelismBenchmark {
 	public void readFile() throws IOException {
 		Files.readAllLines(testFile.toPath(), charset);
 	}
+//
+//	@Benchmark
+//	public void testFiberFiberChannel() throws IOException, Exception {
+//		new Fiber<Void>(new SuspendableRunnable() {
+//			@Override
+//			public void run() throws SuspendExecution {
+//				try (StringSourceI ls = 
+//						new ByteChannelLineSource(FiberFileChannel.open(testFile.toPath()), charset, BUFFER_SIZE)
+//				) {
+//					CharSequence seq = null;
+//					while ((seq = ls.readString()) != null) {
+////						System.out.print(seq);
+//					}
+//				} catch (IOException e) {
+//					throw new RuntimeException(e);
+//				}
+//			}
+//		}).start().join();
+//	}
+////	@Benchmark
+//	public void testThreadFileChannel() throws IOException, Exception {
+//		Thread thread = new Thread(new Runnable() {
+//			@Override
+//			public void run()  {
+//				try (StringSourceI ls = 
+//						new ByteChannelLineSource(FileChannel.open(testFile.toPath()), charset, BUFFER_SIZE)
+//				) {
+//					CharSequence seq = null;
+//					while ((seq = ls.readString()) != null) {
+////						System.out.print(seq);
+//					}
+//				} catch (Throwable e) {
+//					throw new RuntimeException(e);
+//				}
+//			}
+//		});
+//		thread.start();
+//		thread.join();
+//	}
+//	@Benchmark
+//	public void testFiberBufferedReader() throws IOException, Exception {
+//		testFiberAsyncFile(()->{try {
+//			return new LineSourceWrapper(new BufferedReader(new InputStreamReader(new FileInputStream(testFile), charset), BUFFER_SIZE));
+//		} catch (Exception e) {
+//			throw new RuntimeException(e);
+//		}});
+//	}
+//	
+//	@Benchmark
+//	public void testFiberFileChannel() throws IOException, Exception {
+//		testFiberAsyncFile(()->{try {
+//			return new ByteChannelLineSource(FileChannel.open(testFile.toPath()), charset, BUFFER_SIZE);
+//		} catch (Exception e) {
+//			throw new RuntimeException(e);
+//		}});
+//	}
+//	
+//	public void testFiberAsyncFile(Supplier<StringSourceI> sourceSource) throws Exception {
+//		new Fiber<Void>(new SuspendableRunnable() {
+//			@Override
+//			public void run() throws SuspendExecution {
+//				try (StringSourceI ls = 
+//						sourceSource.get()
+//				) {
+//					CharSequence seq = null;
+//					while ((seq = ls.readString()) != null) {
+////						System.out.print(seq);
+//					}
+//				} catch (IOException e) {
+//					throw new RuntimeException(e);
+//				}
+//			}
+//		}).start().join();
+//	}
 
 	@Benchmark
-	@SuppressWarnings("serial")
-	public void testFiberAsyncFile() throws Exception {
-		CharsetEncoder encoder = charset.newEncoder();
-		CharsetDecoder decoder = charset.newDecoder();
-		new Fiber<Void>(new SuspendableRunnable() {
-			@Override
-			public void run() throws SuspendExecution {
-				try (LineSourceI ls = new LineSourceWrapper(new BufferedReader(
-						Channels.newReader(
-								FiberFileChannel.open(testFile.toPath()),
-								charset.name())))) {
-					CharSequence seq = null;
-					while ((seq = ls.readLine()) != null) {
-						System.out.println(seq);
-					}
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}).start().join();
+	public void quasar100() throws InterruptedException, ExecutionException,
+			IOException {
+		quasar(100);
 	}
 
 	@Benchmark
-	public void quasar1000() throws InterruptedException, ExecutionException,
+	public void quasar1250() throws InterruptedException, ExecutionException,
 			IOException {
-		quasar(1000);
+		quasar(1250);
 	}
 
 	public void quasar(int batchSize) throws InterruptedException,
 			ExecutionException, IOException {
-		try (LineSourceI reader = new LineSourceWrapper(new BufferedReader(
-				Channels.newReader(FiberFileChannel.open(testFile.toPath()),
-						charset.name())))) {
-			Integer count = new CountWordsFiber(reader, batchSize).start()
-					.get();
-			// Integer count = new CountWordsFiber(testFile.toPath(), charset,
-			// batchSize).start().get();
-			cachedResult.compareAndSet(0, (int) count);
-			if (cachedResult.get() != count) {
-				throw new AssertionError();
+		new Fiber<Void>(new SuspendableRunnable() {
+			@Override
+			public void run() throws SuspendExecution, InterruptedException {
+				try (StringSourceI reader = new ByteChannelLineSource(FiberFileChannel.open(testFile.toPath()),
+						charset, BUFFER_SIZE)) {
+					Integer count = new CountWordsFiber(reader, batchSize).start()
+							.get();
+					// Integer count = new CountWordsFiber(testFile.toPath(), charset,
+					// batchSize).start().get();
+					cachedResult.compareAndSet(0, (int) count);
+					if (cachedResult.get() != count) {
+						throw new AssertionError();
+					}
+				} catch (ExecutionException | IOException e) {
+					e.printStackTrace();
+				}
 			}
-		}
+		}).start().join();
 	}
 
 	// @Benchmark
@@ -154,26 +225,25 @@ public class ParallelismBenchmark {
 		streamProcessing(false);
 	}
 
-	// @Benchmark
-	public void forkJoin1000() throws InterruptedException, ExecutionException {
-		forkJoin(1000);
+	 @Benchmark
+	public void forkJoin500() throws InterruptedException, ExecutionException {
+		forkJoin(500);
 	}
 
-	// @Benchmark
+	 @Benchmark
 	public void forkJoin750() throws InterruptedException, ExecutionException {
 		forkJoin(750);
 	}
 
-	// @Benchmark
+	@Benchmark
 	public void forkJoin1250() throws InterruptedException, ExecutionException {
 		forkJoin(1250);
 	}
 
 	public void forkJoin(int batchSize) throws InterruptedException,
 			ExecutionException {
-		try (LineSourceWrapper reader = new LineSourceWrapper(
-				new BufferedReader(new InputStreamReader(new FileInputStream(
-						testFile), charset)))) {
+		try (StringSourceI reader = new ByteChannelLineSource(FileChannel.open(testFile.toPath()),
+				charset, BUFFER_SIZE)) {
 			Integer count = new CountWordsForkTask(reader, batchSize).fork()
 					.join();
 			cachedResult.compareAndSet(0, (int) count);
