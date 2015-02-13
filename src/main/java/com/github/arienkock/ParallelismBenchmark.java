@@ -31,46 +31,37 @@
 
 package com.github.arienkock;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.channels.FileChannel;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.CompletionHandler;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.concurrent.ExecutionException;
+import java.util.Collections;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.TearDown;
+import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.infra.Blackhole;
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
 import co.paralleluniverse.fibers.io.FiberFileChannel;
 import co.paralleluniverse.strands.SuspendableRunnable;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 @SuppressWarnings("serial")
 @State(Scope.Benchmark)
 public class ParallelismBenchmark {
 
+	private static final int IO_TOKENS = 10;
+	private static final int COMPUTE_TOKENS = 1_000_000;
 	private Charset charset = Charset.forName("UTF-8");
-
-	static HashSet<String> commonWords = new HashSet<>(Arrays.asList("the",
-			"be", "to", "of", "and", "a", "in", "that", "have", "I", "it",
-			"for", "not", "on", "with"));
 	private File testFile = new File(Paths.get(System.getProperty("user.dir"))
 			.toFile(), "parallelismbenchmarktestdata.txt");
-	private Pattern whitespace = Pattern.compile("[\\s]+");
-	private AtomicInteger cachedResult = new AtomicInteger(0);
-	public static final int BUFFER_SIZE = 200;
+	public static final int BUFFER_SIZE = 8000;
 
 	public ParallelismBenchmark() {
 		if (!testFile.exists() || testFile.length() == 0) {
@@ -92,183 +83,111 @@ public class ParallelismBenchmark {
 			}
 		}
 	}
-
-	@TearDown
-	public void tearDown() {
-		System.out.println("actual reslt = " + cachedResult.get());
+	
+	AtomicInteger monitor = new AtomicInteger(0);
+	
+	@Setup
+	public void init() {
 	}
 
-	// @Benchmark
-	public void testMethod() {
-	}
+	
+	SuspendableRunnable ioRunnableF = new SuspendableRunnable() {
+		@Override
+		public void run() throws SuspendExecution {
+			try (FiberFileChannel ch = FiberFileChannel.open(fiberFileThreadPool, testFile.toPath(), Collections.EMPTY_SET)) {
+				ByteBuffer dst = ByteBuffer.allocateDirect(BUFFER_SIZE);
+				for (int read = 0; read >= 0; read = ch.read(dst)) {
+					Blackhole.consumeCPU(IO_TOKENS);
+					dst.hashCode();
+					dst.clear();
+				}
+				monitor.getAndIncrement();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	};
 
-	// @Benchmark
-	public void readFile() throws IOException {
-		Files.readAllLines(testFile.toPath(), charset);
-	}
-//
-//	@Benchmark
-//	public void testFiberFiberChannel() throws IOException, Exception {
-//		new Fiber<Void>(new SuspendableRunnable() {
-//			@Override
-//			public void run() throws SuspendExecution {
-//				try (StringSourceI ls = 
-//						new ByteChannelLineSource(FiberFileChannel.open(testFile.toPath()), charset, BUFFER_SIZE)
-//				) {
-//					CharSequence seq = null;
-//					while ((seq = ls.readString()) != null) {
-////						System.out.print(seq);
-//					}
-//				} catch (IOException e) {
-//					throw new RuntimeException(e);
-//				}
-//			}
-//		}).start().join();
-//	}
-////	@Benchmark
-//	public void testThreadFileChannel() throws IOException, Exception {
-//		Thread thread = new Thread(new Runnable() {
-//			@Override
-//			public void run()  {
-//				try (StringSourceI ls = 
-//						new ByteChannelLineSource(FileChannel.open(testFile.toPath()), charset, BUFFER_SIZE)
-//				) {
-//					CharSequence seq = null;
-//					while ((seq = ls.readString()) != null) {
-////						System.out.print(seq);
-//					}
-//				} catch (Throwable e) {
-//					throw new RuntimeException(e);
-//				}
-//			}
-//		});
-//		thread.start();
-//		thread.join();
-//	}
-//	@Benchmark
-//	public void testFiberBufferedReader() throws IOException, Exception {
-//		testFiberAsyncFile(()->{try {
-//			return new LineSourceWrapper(new BufferedReader(new InputStreamReader(new FileInputStream(testFile), charset), BUFFER_SIZE));
-//		} catch (Exception e) {
-//			throw new RuntimeException(e);
-//		}});
-//	}
-//	
-//	@Benchmark
-//	public void testFiberFileChannel() throws IOException, Exception {
-//		testFiberAsyncFile(()->{try {
-//			return new ByteChannelLineSource(FileChannel.open(testFile.toPath()), charset, BUFFER_SIZE);
-//		} catch (Exception e) {
-//			throw new RuntimeException(e);
-//		}});
-//	}
-//	
-//	public void testFiberAsyncFile(Supplier<StringSourceI> sourceSource) throws Exception {
-//		new Fiber<Void>(new SuspendableRunnable() {
-//			@Override
-//			public void run() throws SuspendExecution {
-//				try (StringSourceI ls = 
-//						sourceSource.get()
-//				) {
-//					CharSequence seq = null;
-//					while ((seq = ls.readString()) != null) {
-////						System.out.print(seq);
-//					}
-//				} catch (IOException e) {
-//					throw new RuntimeException(e);
-//				}
-//			}
-//		}).start().join();
-//	}
+	SuspendableRunnable computeRunnableF = new SuspendableRunnable() {
+		@Override
+		public void run() throws SuspendExecution {
+			Blackhole.consumeCPU(COMPUTE_TOKENS);
+			monitor.getAndIncrement();
+		}
+	};
 
 	@Benchmark
-	public void quasar100() throws InterruptedException, ExecutionException,
-			IOException {
-		quasar(100);
+	public void testFiberChannel() throws IOException, Exception {
+		monitor.set(0);
+		for (int i = 0; i < 10; i++) {
+			new Fiber<Void>(ioRunnableF).start();
+		}
+//		for (int i = 0; i < 10; i++) {
+//			new Fiber<Void>(computeRunnableF).start();
+//		}
+//		MonitoredForkJoinPool executor = (MonitoredForkJoinPool)DefaultFiberScheduler.getInstance().getExecutor();
+		while (monitor.get() < 10) {
+			Thread.yield();
+		}
 	}
+	
+    private static final ExecutorService fiberFileThreadPool = Executors.newFixedThreadPool(10,
+            new ThreadFactoryBuilder().setDaemon(true).setNameFormat("blala").build());
 
-	@Benchmark
-	public void quasar1250() throws InterruptedException, ExecutionException,
-			IOException {
-		quasar(1250);
-	}
+	Runnable ioRunnableT = new Runnable() {
+		@Override
+		public void run() {
+			try {
+				AsynchronousFileChannel ch = AsynchronousFileChannel
+						.open(testFile.toPath(), Collections.EMPTY_SET, fiberFileThreadPool);
+				ByteBuffer dst = ByteBuffer.allocateDirect(BUFFER_SIZE);
+				doRead(ch, dst);
+			} catch (Throwable t) {
+				throw new RuntimeException(t);
+			}
+		}
 
-	public void quasar(int batchSize) throws InterruptedException,
-			ExecutionException, IOException {
-		new Fiber<Void>(new SuspendableRunnable() {
+	};
+	private void doRead(AsynchronousFileChannel ch, ByteBuffer dst) {
+		ch.read(dst, dst.position(), null,
+				new CompletionHandler<Integer, Void>() {
+			
 			@Override
-			public void run() throws SuspendExecution, InterruptedException {
-				try (StringSourceI reader = new ByteChannelLineSource(FiberFileChannel.open(testFile.toPath()),
-						charset, BUFFER_SIZE)) {
-					Integer count = new CountWordsFiber(reader, batchSize).start()
-							.get();
-					// Integer count = new CountWordsFiber(testFile.toPath(), charset,
-					// batchSize).start().get();
-					cachedResult.compareAndSet(0, (int) count);
-					if (cachedResult.get() != count) {
-						throw new AssertionError();
+			public void completed(Integer result, Void attachment) {
+				if (result >= 0) {
+					Blackhole.consumeCPU(IO_TOKENS);
+					dst.hashCode();
+					dst.clear();
+					doRead(ch, dst);
+				} else {
+					try {
+						ch.close();
+					} catch (IOException e) {
 					}
-				} catch (ExecutionException | IOException e) {
-					e.printStackTrace();
 				}
 			}
-		}).start().join();
+			
+			@Override
+			public void failed(Throwable exc, Void attachment) {
+				throw new RuntimeException(exc);
+			}
+		});
 	}
-
-	// @Benchmark
-	public void streamProcessingParallel() throws IOException {
-		streamProcessing(true);
-	}
-
-	// @Benchmark
-	public void streamProcessingNonParallel() throws IOException {
-		streamProcessing(false);
-	}
-
-	 @Benchmark
-	public void forkJoin500() throws InterruptedException, ExecutionException {
-		forkJoin(500);
-	}
-
-	 @Benchmark
-	public void forkJoin750() throws InterruptedException, ExecutionException {
-		forkJoin(750);
-	}
+	Runnable computeRunnableT = new Runnable() {
+		@Override
+		public void run() {
+			Blackhole.consumeCPU(COMPUTE_TOKENS);
+		}
+	};
 
 	@Benchmark
-	public void forkJoin1250() throws InterruptedException, ExecutionException {
-		forkJoin(1250);
-	}
-
-	public void forkJoin(int batchSize) throws InterruptedException,
-			ExecutionException {
-		try (StringSourceI reader = new ByteChannelLineSource(FileChannel.open(testFile.toPath()),
-				charset, BUFFER_SIZE)) {
-			Integer count = new CountWordsForkTask(reader, batchSize).fork()
-					.join();
-			cachedResult.compareAndSet(0, (int) count);
-			if (cachedResult.get() != count) {
-				throw new AssertionError();
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+	public void testAsyncChannelOnFJP() throws IOException, Exception {
+		for (int i = 0; i < 10; i++) {
+			ForkJoinTask.adapt(ioRunnableT).fork();
 		}
+//		for (int i = 0; i < 10; i++) {
+//			ForkJoinTask.adapt(computeRunnableT).fork();
+//		}
+		ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
 	}
-
-	public void streamProcessing(boolean parallel) throws IOException {
-		try (Stream<String> stream = Files.lines(testFile.toPath(), charset)) {
-			Stream<String> streamToUse = stream;
-			if (parallel) {
-				streamToUse = stream.parallel();
-			}
-			long count = streamToUse.flatMap(whitespace::splitAsStream)
-					.map(String::toLowerCase).filter(commonWords::contains)
-					.count();
-			cachedResult.compareAndSet(0, (int) count);
-			if (cachedResult.get() != count) {
-				throw new AssertionError();
-			}
-		}
-	}
-
 }
