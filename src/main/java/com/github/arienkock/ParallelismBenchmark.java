@@ -33,35 +33,39 @@ package com.github.arienkock;
 
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousFileChannel;
-import java.nio.channels.CompletionHandler;
+import java.nio.channels.*;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.*;
+import java.util.concurrent.ForkJoinPool.ManagedBlocker;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 
-import co.paralleluniverse.fibers.Fiber;
-import co.paralleluniverse.fibers.SuspendExecution;
+import co.paralleluniverse.concurrent.forkjoin.MonitoredForkJoinPool;
+import co.paralleluniverse.fibers.*;
 import co.paralleluniverse.fibers.io.FiberFileChannel;
 import co.paralleluniverse.strands.SuspendableRunnable;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 @SuppressWarnings("serial")
 @State(Scope.Benchmark)
 public class ParallelismBenchmark {
 
-	private static final int IO_TOKENS = 10;
+	private static final int IO_TOKENS = 1_000;
 	private static final int COMPUTE_TOKENS = 1_000_000;
 	private Charset charset = Charset.forName("UTF-8");
 	private File testFile = new File(Paths.get(System.getProperty("user.dir"))
 			.toFile(), "parallelismbenchmarktestdata.txt");
 	public static final int BUFFER_SIZE = 8000;
+	private static final int COMPUTE_RUNS = 0;
+	private static final int IO_RUNS = 1;
+//    private static final ExecutorService fiberFileThreadPool = Executors.newFixedThreadPool(10,
+//            new ThreadFactoryBuilder().setDaemon(true).setNameFormat("blala-%d").build());
+    AtomicInteger monitor = new AtomicInteger(0);
 
 	public ParallelismBenchmark() {
 		if (!testFile.exists() || testFile.length() == 0) {
@@ -84,24 +88,33 @@ public class ParallelismBenchmark {
 		}
 	}
 	
-	AtomicInteger monitor = new AtomicInteger(0);
 	
 	@Setup
 	public void init() {
+		monitor.set(0);
+	}
+	
+	@TearDown
+	public void shutdown() {
+		System.out.println("num bytes read = " + monitor.get());
+		monitor.set(0);
 	}
 
-	
+
+	/**
+	 * FIBERS 
+	 */
 	SuspendableRunnable ioRunnableF = new SuspendableRunnable() {
 		@Override
 		public void run() throws SuspendExecution {
-			try (FiberFileChannel ch = FiberFileChannel.open(fiberFileThreadPool, testFile.toPath(), Collections.EMPTY_SET)) {
+			try (FiberFileChannel ch = FiberFileChannel.open((MonitoredForkJoinPool)DefaultFiberScheduler.getInstance().getExecutor(), testFile.toPath(), Collections.EMPTY_SET)) {
 				ByteBuffer dst = ByteBuffer.allocateDirect(BUFFER_SIZE);
 				for (int read = 0; read >= 0; read = ch.read(dst)) {
-					Blackhole.consumeCPU(IO_TOKENS);
+					Blackhole.consumeCPU(read * IO_TOKENS);
+					monitor.getAndAdd(read);
 					dst.hashCode();
 					dst.clear();
 				}
-				monitor.getAndIncrement();
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -112,53 +125,57 @@ public class ParallelismBenchmark {
 		@Override
 		public void run() throws SuspendExecution {
 			Blackhole.consumeCPU(COMPUTE_TOKENS);
-			monitor.getAndIncrement();
 		}
 	};
 
 	@Benchmark
 	public void testFiberChannel() throws IOException, Exception {
-		monitor.set(0);
-		for (int i = 0; i < 10; i++) {
-			new Fiber<Void>(ioRunnableF).start();
+		ArrayList<Fiber<Void>> list = new ArrayList<Fiber<Void>>();
+		for (int i = 0; i < IO_RUNS; i++) {
+			list.add(new Fiber<Void>(ioRunnableF).start());
 		}
-//		for (int i = 0; i < 10; i++) {
-//			new Fiber<Void>(computeRunnableF).start();
-//		}
-//		MonitoredForkJoinPool executor = (MonitoredForkJoinPool)DefaultFiberScheduler.getInstance().getExecutor();
-		while (monitor.get() < 10) {
-			Thread.yield();
+		for (int i = 0; i < COMPUTE_RUNS; i++) {
+			list.add(new Fiber<Void>(computeRunnableF).start());
+		}
+		for (Fiber<Void> f : list) {
+			f.join();
 		}
 	}
 	
-    private static final ExecutorService fiberFileThreadPool = Executors.newFixedThreadPool(10,
-            new ThreadFactoryBuilder().setDaemon(true).setNameFormat("blala").build());
-
+	
+	/**
+	 * THREADS ASYNC IO
+	 */
+	
 	Runnable ioRunnableT = new Runnable() {
 		@Override
 		public void run() {
 			try {
 				AsynchronousFileChannel ch = AsynchronousFileChannel
-						.open(testFile.toPath(), Collections.EMPTY_SET, fiberFileThreadPool);
+						.open(testFile.toPath(), Collections.EMPTY_SET, /*fiberFileThreadPool*/ForkJoinPool.commonPool());
 				ByteBuffer dst = ByteBuffer.allocateDirect(BUFFER_SIZE);
-				doRead(ch, dst);
+				doRead(ch, dst, 0L);
 			} catch (Throwable t) {
 				throw new RuntimeException(t);
 			}
 		}
 
 	};
-	private void doRead(AsynchronousFileChannel ch, ByteBuffer dst) {
-		ch.read(dst, dst.position(), null,
+	private void doRead(final AsynchronousFileChannel ch, final ByteBuffer dst, final long position) {
+		ch.read(dst, position, null,
 				new CompletionHandler<Integer, Void>() {
 			
 			@Override
 			public void completed(Integer result, Void attachment) {
-				if (result >= 0) {
-					Blackhole.consumeCPU(IO_TOKENS);
-					dst.hashCode();
-					dst.clear();
-					doRead(ch, dst);
+				AtomicInteger m = monitor;
+				ByteBuffer d = dst;
+				int numRead = result;
+				if (numRead >= 0) {
+					Blackhole.consumeCPU(numRead * IO_TOKENS);
+					m.getAndAdd(numRead);
+					d.hashCode();
+					d.clear();
+					doRead(ch, d, position + numRead);
 				} else {
 					try {
 						ch.close();
@@ -169,6 +186,10 @@ public class ParallelismBenchmark {
 			
 			@Override
 			public void failed(Throwable exc, Void attachment) {
+				try {
+					ch.close();
+				} catch (IOException e) {
+				}
 				throw new RuntimeException(exc);
 			}
 		});
@@ -182,12 +203,91 @@ public class ParallelismBenchmark {
 
 	@Benchmark
 	public void testAsyncChannelOnFJP() throws IOException, Exception {
-		for (int i = 0; i < 10; i++) {
-			ForkJoinTask.adapt(ioRunnableT).fork();
+		ArrayList<ForkJoinTask> list = new ArrayList<ForkJoinTask>();
+		for (int i = 0; i < IO_RUNS; i++) {
+			list.add(ForkJoinTask.adapt(ioRunnableT).fork());
 		}
-//		for (int i = 0; i < 10; i++) {
-//			ForkJoinTask.adapt(computeRunnableT).fork();
-//		}
+		for (int i = 0; i < COMPUTE_RUNS; i++) {
+			list.add(ForkJoinTask.adapt(computeRunnableT).fork());
+		}
 		ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
+//		for (ForkJoinTask f : list) {
+//			f.join();
+//		}
 	}
+	
+	/**
+	 * THREAD BLOCKING IO
+	 */
+	Runnable ioRunnableTB = new Runnable() {
+		@Override
+		public void run() {
+			try (FileChannel ch = FileChannel.open(testFile.toPath(), Collections.EMPTY_SET)) {
+				ByteBuffer dst = ByteBuffer.allocateDirect(BUFFER_SIZE);
+//				for (int read = 0; read >= 0;read = ch.read(dst)) {
+				while (ch.isOpen()) {
+					ForkJoinPool.managedBlock(blockingRead(ch, dst));
+					int read = dst.position();
+					monitor.getAndAdd(read);
+					Blackhole.consumeCPU(read * IO_TOKENS);
+					dst.hashCode();
+					dst.clear();
+				}
+			} catch (IOException | InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	};
+	protected ManagedBlocker blockingRead(FileChannel ch, ByteBuffer dst) {
+		return new ManagedBlocker() {
+			boolean done = false;
+			private int numRead = 0;
+			
+			@Override
+			public boolean isReleasable() {
+				return done;
+			}
+			
+			@Override
+			public boolean block() throws InterruptedException {
+				try {
+					numRead = ch.read(dst);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				} finally {
+					if (numRead < 0) {
+						try {
+							ch.close();
+						} catch (IOException e) {
+						}
+					}
+				}
+				return done = true;
+			}
+		};
+	}
+
+	Runnable computeRunnableTB = new Runnable() {
+		@Override
+		public void run() {
+			Blackhole.consumeCPU(COMPUTE_TOKENS);
+		}
+	};
+	
+	@Benchmark
+	public void testBlockingOnFJP() throws IOException, Exception {
+		ArrayList<ForkJoinTask> list = new ArrayList<ForkJoinTask>();
+		for (int i = 0; i < IO_RUNS; i++) {
+			list.add(ForkJoinTask.adapt(ioRunnableTB).fork());
+		}
+		for (int i = 0; i < COMPUTE_RUNS; i++) {
+			list.add(ForkJoinTask.adapt(computeRunnableTB).fork());
+		}
+//		ForkJoinPool.commonPool().awaitQuiescence(1, TimeUnit.MINUTES);
+		for (ForkJoinTask f : list) {
+			f.join();
+		}
+	}
+
+
 }
