@@ -52,28 +52,34 @@ import co.paralleluniverse.fibers.io.FiberFileChannel;
 import co.paralleluniverse.strands.SuspendableRunnable;
 
 @SuppressWarnings("serial")
+@BenchmarkMode(Mode.AverageTime)
+@Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
+@Measurement(iterations = 10, time = 1, timeUnit = TimeUnit.SECONDS)
+@Fork(1)
 @State(Scope.Benchmark)
 public class ParallelismBenchmark {
 
 	private static final int IO_TOKENS = 1_000;
-	private static final int COMPUTE_TOKENS = 1_000_000;
+	private static final int COMPUTE_TOKENS = 25_000_000;
 	private Charset charset = Charset.forName("UTF-8");
 	private File testFile = new File(Paths.get(System.getProperty("user.dir"))
 			.toFile(), "parallelismbenchmarktestdata.txt");
 	public static final int BUFFER_SIZE = 8000;
-	private static final int COMPUTE_RUNS = 0;
-	private static final int IO_RUNS = 1;
-//    private static final ExecutorService fiberFileThreadPool = Executors.newFixedThreadPool(10,
-//            new ThreadFactoryBuilder().setDaemon(true).setNameFormat("blala-%d").build());
-    AtomicInteger monitor = new AtomicInteger(0);
+	
+	private static AtomicInteger monitor = new AtomicInteger(0);
+	private static int correctNumberOfBytes = -1;
+	@Param({"4", "8", "16"})
+	private int COMPUTE_RUNS;
+	@Param({"2", "4", "8"})
+	private int IO_RUNS;
 
 	public ParallelismBenchmark() {
+		// Create random test data
 		if (!testFile.exists() || testFile.length() == 0) {
 			try (OutputStreamWriter writer = new OutputStreamWriter(
 					new FileOutputStream(testFile), charset)) {
 				for (int i = 0; i < 3_000_000; i++) {
 					double random = Math.random();
-
 					if (random < 0.05D) {
 						writer.append(System.lineSeparator());
 					} else if (random < 0.5D) {
@@ -96,8 +102,13 @@ public class ParallelismBenchmark {
 	
 	@TearDown
 	public void shutdown() {
-		System.out.println("num bytes read = " + monitor.get());
-		monitor.set(0);
+		// verify number of bytes read after each invocation
+		if (correctNumberOfBytes < 0) {
+			correctNumberOfBytes = monitor.get();
+		}
+		if (monitor.get() != correctNumberOfBytes) {
+			throw new AssertionError("Something is wrong with the implementation. Number of bytes read must be constant for each test.");
+		}
 	}
 
 
