@@ -4,41 +4,52 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousChannelGroup;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
 import org.openjdk.jmh.annotations.*;
 
-import co.paralleluniverse.fibers.Fiber;
-import co.paralleluniverse.fibers.SuspendExecution;
+import co.paralleluniverse.fibers.*;
 import co.paralleluniverse.fibers.io.FiberServerSocketChannel;
 import co.paralleluniverse.fibers.io.FiberSocketChannel;
 import co.paralleluniverse.strands.SuspendableRunnable;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
+@BenchmarkMode(Mode.AverageTime)
+@Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
+@Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
+@Fork(1)
 @State(Scope.Benchmark)
 public class FountainSocketBenchmark {
-	private ExecutorService executorService;
+	private ExecutorService executorService = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());
 	private AsynchronousChannelGroup asynChanGroup;
+	@Param({"10000"})
+	private int BYTE_COUNT_LIMIT;
+	@Param({"64"})
+	private int NUM_CLIENTS;
+	@Param({"1024"})
+	private int READ_BUFFER_SIZE;
+	@Param({"8"})
+	private int SERVER_COUNT;
 
 	@Benchmark
 	public void fountainFibers() {
 		List<Fiber<Void>> fibers = new ArrayList<>();
-		for (int count = 0; count < 2; count++) {
-			Fiber<Void> f = new Fiber<Void>(serverRunnableFiber(1000, 2))
+		for (int count = 0; count < SERVER_COUNT; count++) {
+			Fiber<Void> f = new Fiber<Void>(serverRunnableFiber(BYTE_COUNT_LIMIT, NUM_CLIENTS))
 					.start();
 			fibers.add(f);
 		}
-		for (Fiber<Void> f : fibers) {
+		fibers.forEach((f)->{
 			try {
 				f.join();
 			} catch (ExecutionException | InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
+		});
 	}
 
 	public SuspendableRunnable serverRunnableFiber(int byteCount, int numClients) {
@@ -96,13 +107,14 @@ public class FountainSocketBenchmark {
 		return new SuspendableRunnable() {
 			@Override
 			public void run() throws SuspendExecution, InterruptedException {
-				ByteBuffer buf = ByteBuffer.allocate(1024);
+				ByteBuffer buf = ByteBuffer.allocate(READ_BUFFER_SIZE);
 				InetSocketAddress inetSocketAddress = new InetSocketAddress(
 						"127.0.0.1",
 						((InetSocketAddress) localAddress).getPort());
 				try (FiberSocketChannel ch = FiberSocketChannel
 						.open(asynChanGroup, inetSocketAddress)) {
 					while (ch.read(buf) >= 0) {
+						buf.hashCode();
 						buf.clear();
 					}
 				} catch (IOException e) {
@@ -115,31 +127,31 @@ public class FountainSocketBenchmark {
 	@Setup
 	public void init() throws IOException {
 		System.out.println("Setup");
-		if (executorService == null) {
-			executorService = Executors.newFixedThreadPool(100);
-			asynChanGroup = AsynchronousChannelGroup.withThreadPool(executorService);
+		if (asynChanGroup == null) {
+//			executorService = Executors.newFixedThreadPool(100);
+			asynChanGroup = AsynchronousChannelGroup.withThreadPool((ExecutorService) DefaultFiberScheduler.getInstance().getExecutor());//AsynchronousChannelGroup.withThreadPool(executorService);
 		}
 	}
 	@TearDown
 	public void close() throws IOException {
-		if (executorService != null) {
-			asynChanGroup.shutdown();
-			try {
-				asynChanGroup.awaitTermination(10, TimeUnit.SECONDS);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} finally {
-				executorService = null;
-				asynChanGroup = null;
-			}
-		}
+//		if (asynChanGroup != null) {
+//			asynChanGroup.shutdown();
+//			try {
+//				asynChanGroup.awaitTermination(10, TimeUnit.SECONDS);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			} finally {
+//				executorService = null;
+//				asynChanGroup = null;
+//			}
+//		}
 	}
 
 	@Benchmark
 	public void fountainThread() {
 		List<Future<?>> fibers = new ArrayList<>();
-		for (int count = 0; count < 2; count++) {
-			Future<?> f = executorService.submit(serverRunnableThread(1000, 2));
+		for (int count = 0; count < SERVER_COUNT; count++) {
+			Future<?> f = executorService.submit(serverRunnableThread(BYTE_COUNT_LIMIT, NUM_CLIENTS));
 			fibers.add(f);
 		}
 		for (Future<?> f : fibers) {
@@ -204,15 +216,17 @@ public class FountainSocketBenchmark {
 
 	private Runnable clientRunnableThread(SocketAddress localAddress) {
 		return new Runnable() {
+
 			@Override
 			public void run() {
-				ByteBuffer buf = ByteBuffer.allocate(1024);
+				ByteBuffer buf = ByteBuffer.allocate(READ_BUFFER_SIZE);
 				InetSocketAddress inetSocketAddress = new InetSocketAddress(
 						"127.0.0.1",
 						((InetSocketAddress) localAddress).getPort());
 				try (SocketChannel ch = SocketChannel.open(inetSocketAddress)) {
 					while (ch.read(buf) >= 0) {
 						buf.clear();
+						buf.hashCode();
 					}
 				} catch (IOException e) {
 					e.printStackTrace();

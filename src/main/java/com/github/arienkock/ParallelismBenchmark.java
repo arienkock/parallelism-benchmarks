@@ -51,10 +51,12 @@ import co.paralleluniverse.fibers.*;
 import co.paralleluniverse.fibers.io.FiberFileChannel;
 import co.paralleluniverse.strands.SuspendableRunnable;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 @SuppressWarnings("serial")
 @BenchmarkMode(Mode.AverageTime)
 @Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 10, time = 1, timeUnit = TimeUnit.SECONDS)
+@Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
 @Fork(1)
 @State(Scope.Benchmark)
 public class ParallelismBenchmark {
@@ -64,11 +66,12 @@ public class ParallelismBenchmark {
 	private Charset charset = Charset.forName("UTF-8");
 	private File testFile = new File(Paths.get(System.getProperty("user.dir"))
 			.toFile(), "parallelismbenchmarktestdata.txt");
+	private ExecutorService cachedThreadPool;
 	public static final int BUFFER_SIZE = 8000;
 	
 	private static AtomicInteger monitor = new AtomicInteger(0);
 	private static int correctNumberOfBytes = -1;
-	@Param({"4", "8", "16"})
+	@Param({"0", "256"})
 	private int COMPUTE_RUNS;
 	@Param({"2", "4", "8"})
 	private int IO_RUNS;
@@ -98,6 +101,9 @@ public class ParallelismBenchmark {
 	@Setup
 	public void init() {
 		monitor.set(0);
+		if (cachedThreadPool == null) {
+			cachedThreadPool = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());
+		}
 	}
 	
 	@TearDown
@@ -228,7 +234,7 @@ public class ParallelismBenchmark {
 	}
 	
 	/**
-	 * THREAD BLOCKING IO
+	 * THREAD MANAGED BLOCKING IO
 	 */
 	Runnable ioRunnableTB = new Runnable() {
 		@Override
@@ -300,5 +306,46 @@ public class ParallelismBenchmark {
 		}
 	}
 
+	/**
+	 * THREAD BLOCKING FULL IO
+	 */
+	Runnable ioRunnableTBF = new Runnable() {
+		@Override
+		public void run() {
+			try (FileChannel ch = FileChannel.open(testFile.toPath(), Collections.EMPTY_SET)) {
+				ByteBuffer dst = ByteBuffer.allocateDirect(BUFFER_SIZE);
+				int read = 0;
+				while ((read = ch.read(dst)) >= 0) {
+					monitor.getAndAdd(read);
+					Blackhole.consumeCPU(read * IO_TOKENS);
+					dst.hashCode();
+					dst.clear();
+				}
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	};
+
+	Runnable computeRunnableTBF = new Runnable() {
+		@Override
+		public void run() {
+			Blackhole.consumeCPU(COMPUTE_TOKENS);
+		}
+	};
+	
+	@Benchmark
+	public void testFullBlockingOnFJP() throws IOException, Exception {
+		ArrayList<Future> list = new ArrayList<Future>();
+		for (int i = 0; i < IO_RUNS; i++) {
+			list.add(cachedThreadPool.submit(ioRunnableTBF));
+		}
+		for (int i = 0; i < COMPUTE_RUNS; i++) {
+			list.add(cachedThreadPool.submit(computeRunnableTBF));
+		}
+		for (Future f : list) {
+			f.get();
+		}
+	}
 
 }
