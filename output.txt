@@ -1,0 +1,975 @@
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testAsyncChannelOnFJP
+# Parameters: (COMPUTE_RUNS = 4, IO_RUNS = 2)
+
+# Run progress: 0.00% complete, ETA 00:06:45
+# Fork: 1 of 1
+# Warmup Iteration   1: 17.609 s/op
+# Warmup Iteration   2: 17.159 s/op
+# Warmup Iteration   3: 17.161 s/op
+# Warmup Iteration   4: 17.614 s/op
+# Warmup Iteration   5: 3.360 s/op
+Iteration   1: 25.760 s/op
+Iteration   2: 17.552 s/op
+Iteration   3: 17.710 s/op
+Iteration   4: 17.656 s/op
+Iteration   5: 17.504 s/op
+Iteration   6: 17.359 s/op
+Iteration   7: 17.735 s/op
+Iteration   8: 3.034 s/op
+Iteration   9: 26.004 s/op
+Iteration  10: 1.090 s/op
+
+
+Result: 16.141 ñ(99.9%) 12.352 s/op [Average]
+  Statistics: (min, avg, max) = (1.090, 16.141, 26.004), stdev = 8.170
+  Confidence interval (99.9%): [3.788, 28.493]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testAsyncChannelOnFJP
+# Parameters: (COMPUTE_RUNS = 4, IO_RUNS = 4)
+
+# Run progress: 3.70% complete, ETA 01:41:56
+# Fork: 1 of 1
+# Warmup Iteration   1: 27.865 s/op
+# Warmup Iteration   2: 27.720 s/op
+# Warmup Iteration   3: 27.721 s/op
+# Warmup Iteration   4: 27.729 s/op
+# Warmup Iteration   5: 27.706 s/op
+Iteration   1: 27.703 s/op
+Iteration   2: 27.722 s/op
+Iteration   3: 27.704 s/op
+Iteration   4: 27.712 s/op
+Iteration   5: 27.703 s/op
+Iteration   6: 27.703 s/op
+Iteration   7: 27.700 s/op
+Iteration   8: 27.708 s/op
+Iteration   9: 27.705 s/op
+Iteration  10: 27.708 s/op
+
+
+Result: 27.707 ñ(99.9%) 0.010 s/op [Average]
+  Statistics: (min, avg, max) = (27.700, 27.707, 27.722), stdev = 0.006
+  Confidence interval (99.9%): [27.697, 27.717]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testAsyncChannelOnFJP
+# Parameters: (COMPUTE_RUNS = 4, IO_RUNS = 8)
+
+# Run progress: 7.41% complete, ETA 02:15:45
+# Fork: 1 of 1
+# Warmup Iteration   1: 55.347 s/op
+# Warmup Iteration   2: 55.294 s/op
+# Warmup Iteration   3: 55.209 s/op
+# Warmup Iteration   4: 55.246 s/op
+# Warmup Iteration   5: 55.334 s/op
+Iteration   1: 55.212 s/op
+Iteration   2: 55.172 s/op
+Iteration   3: 55.178 s/op
+Iteration   4: 55.269 s/op
+Iteration   5: 55.186 s/op
+Iteration   6: 55.187 s/op
+Iteration   7: 55.264 s/op
+Iteration   8: 55.225 s/op
+Iteration   9: 55.220 s/op
+Iteration  10: 55.209 s/op
+
+
+Result: 55.212 ñ(99.9%) 0.051 s/op [Average]
+  Statistics: (min, avg, max) = (55.172, 55.212, 55.269), stdev = 0.034
+  Confidence interval (99.9%): [55.162, 55.263]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testAsyncChannelOnFJP
+# Parameters: (COMPUTE_RUNS = 8, IO_RUNS = 2)
+
+# Run progress: 11.11% complete, ETA 03:17:25
+# Fork: 1 of 1
+# Warmup Iteration   1: 16.738 s/op
+# Warmup Iteration   2: 16.648 s/op
+# Warmup Iteration   3: 16.598 s/op
+# Warmup Iteration   4: 16.762 s/op
+# Warmup Iteration   5: 16.675 s/op
+Iteration   1: 16.720 s/op
+Iteration   2: 16.678 s/op
+Iteration   3: 16.598 s/op
+Iteration   4: 16.622 s/op
+Iteration   5: 16.627 s/op
+Iteration   6: 16.463 s/op
+Iteration   7: 16.725 s/op
+Iteration   8: 2.237 s/op
+Iteration   9: 26.646 s/op
+Iteration  10: 16.530 s/op
+
+
+Result: 16.185 ñ(99.9%) 8.809 s/op [Average]
+  Statistics: (min, avg, max) = (2.237, 16.185, 26.646), stdev = 5.827
+  Confidence interval (99.9%): [7.375, 24.994]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testAsyncChannelOnFJP
+# Parameters: (COMPUTE_RUNS = 8, IO_RUNS = 4)
+
+# Run progress: 14.81% complete, ETA 02:45:29
+# Fork: 1 of 1
+# Warmup Iteration   1: 28.054 s/op
+# Warmup Iteration   2: 27.907 s/op
+# Warmup Iteration   3: 27.935 s/op
+# Warmup Iteration   4: 27.920 s/op
+# Warmup Iteration   5: 27.905 s/op
+Iteration   1: 27.939 s/op
+Iteration   2: 27.921 s/op
+Iteration   3: 27.898 s/op
+Iteration   4: 27.953 s/op
+Iteration   5: 27.923 s/op
+Iteration   6: 27.917 s/op
+Iteration   7: 27.925 s/op
+Iteration   8: 27.927 s/op
+Iteration   9: 27.946 s/op
+Iteration  10: 27.913 s/op
+
+
+Result: 27.926 ñ(99.9%) 0.025 s/op [Average]
+  Statistics: (min, avg, max) = (27.898, 27.926, 27.953), stdev = 0.016
+  Confidence interval (99.9%): [27.902, 27.951]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testAsyncChannelOnFJP
+# Parameters: (COMPUTE_RUNS = 8, IO_RUNS = 8)
+
+# Run progress: 18.52% complete, ETA 02:37:25
+# Fork: 1 of 1
+# Warmup Iteration   1: 55.629 s/op
+# Warmup Iteration   2: 55.445 s/op
+# Warmup Iteration   3: 55.393 s/op
+# Warmup Iteration   4: 55.409 s/op
+# Warmup Iteration   5: 55.393 s/op
+Iteration   1: 55.431 s/op
+Iteration   2: 55.450 s/op
+Iteration   3: 55.406 s/op
+Iteration   4: 55.439 s/op
+Iteration   5: 55.444 s/op
+Iteration   6: 55.408 s/op
+Iteration   7: 55.390 s/op
+Iteration   8: 55.401 s/op
+Iteration   9: 55.392 s/op
+Iteration  10: 55.413 s/op
+
+
+Result: 55.417 ñ(99.9%) 0.033 s/op [Average]
+  Statistics: (min, avg, max) = (55.390, 55.417, 55.450), stdev = 0.022
+  Confidence interval (99.9%): [55.384, 55.451]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testAsyncChannelOnFJP
+# Parameters: (COMPUTE_RUNS = 16, IO_RUNS = 2)
+
+# Run progress: 22.22% complete, ETA 02:53:45
+# Fork: 1 of 1
+# Warmup Iteration   1: 1.159 s/op
+# Warmup Iteration   2: 28.216 s/op
+# Warmup Iteration   3: 16.874 s/op
+# Warmup Iteration   4: 17.230 s/op
+# Warmup Iteration   5: 17.059 s/op
+Iteration   1: 17.065 s/op
+Iteration   2: 16.715 s/op
+Iteration   3: 2.153 s/op
+Iteration   4: 27.591 s/op
+Iteration   5: 17.029 s/op
+Iteration   6: 17.055 s/op
+Iteration   7: 16.859 s/op
+Iteration   8: 17.065 s/op
+Iteration   9: 16.814 s/op
+Iteration  10: 16.939 s/op
+
+
+Result: 16.528 ñ(99.9%) 9.162 s/op [Average]
+  Statistics: (min, avg, max) = (2.153, 16.528, 27.591), stdev = 6.060
+  Confidence interval (99.9%): [7.366, 25.691]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testAsyncChannelOnFJP
+# Parameters: (COMPUTE_RUNS = 16, IO_RUNS = 4)
+
+# Run progress: 25.93% complete, ETA 02:33:33
+# Fork: 1 of 1
+# Warmup Iteration   1: 28.500 s/op
+# Warmup Iteration   2: 28.389 s/op
+# Warmup Iteration   3: 28.357 s/op
+# Warmup Iteration   4: 28.471 s/op
+# Warmup Iteration   5: 28.368 s/op
+Iteration   1: 28.413 s/op
+Iteration   2: 28.368 s/op
+Iteration   3: 28.423 s/op
+Iteration   4: 28.379 s/op
+Iteration   5: 28.370 s/op
+Iteration   6: 28.344 s/op
+Iteration   7: 28.390 s/op
+Iteration   8: 28.343 s/op
+Iteration   9: 28.412 s/op
+Iteration  10: 28.345 s/op
+
+
+Result: 28.379 ñ(99.9%) 0.046 s/op [Average]
+  Statistics: (min, avg, max) = (28.343, 28.379, 28.423), stdev = 0.030
+  Confidence interval (99.9%): [28.333, 28.424]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testAsyncChannelOnFJP
+# Parameters: (COMPUTE_RUNS = 16, IO_RUNS = 8)
+
+# Run progress: 29.63% complete, ETA 02:24:31
+# Fork: 1 of 1
+# Warmup Iteration   1: 56.047 s/op
+# Warmup Iteration   2: 56.161 s/op
+# Warmup Iteration   3: 55.890 s/op
+# Warmup Iteration   4: 55.838 s/op
+# Warmup Iteration   5: 55.844 s/op
+Iteration   1: 55.842 s/op
+Iteration   2: 55.832 s/op
+Iteration   3: 55.835 s/op
+Iteration   4: 55.872 s/op
+Iteration   5: 55.925 s/op
+Iteration   6: 55.852 s/op
+Iteration   7: 55.892 s/op
+Iteration   8: 55.860 s/op
+Iteration   9: 55.750 s/op
+Iteration  10: 55.920 s/op
+
+
+Result: 55.858 ñ(99.9%) 0.076 s/op [Average]
+  Statistics: (min, avg, max) = (55.750, 55.858, 55.925), stdev = 0.050
+  Confidence interval (99.9%): [55.782, 55.934]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testBlockingOnFJP
+# Parameters: (COMPUTE_RUNS = 4, IO_RUNS = 2)
+
+# Run progress: 33.33% complete, ETA 02:29:39
+# Fork: 1 of 1
+# Warmup Iteration   1: 16.710 s/op
+# Warmup Iteration   2: 16.596 s/op
+# Warmup Iteration   3: 16.449 s/op
+# Warmup Iteration   4: 16.620 s/op
+# Warmup Iteration   5: 16.383 s/op
+Iteration   1: 16.412 s/op
+Iteration   2: 16.577 s/op
+Iteration   3: 16.711 s/op
+Iteration   4: 16.811 s/op
+Iteration   5: 16.671 s/op
+Iteration   6: 16.501 s/op
+Iteration   7: 16.571 s/op
+Iteration   8: 16.816 s/op
+Iteration   9: 16.690 s/op
+Iteration  10: 16.486 s/op
+
+
+Result: 16.625 ñ(99.9%) 0.208 s/op [Average]
+  Statistics: (min, avg, max) = (16.412, 16.625, 16.816), stdev = 0.138
+  Confidence interval (99.9%): [16.417, 16.833]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testBlockingOnFJP
+# Parameters: (COMPUTE_RUNS = 4, IO_RUNS = 4)
+
+# Run progress: 37.04% complete, ETA 02:14:17
+# Fork: 1 of 1
+# Warmup Iteration   1: 27.798 s/op
+# Warmup Iteration   2: 27.694 s/op
+# Warmup Iteration   3: 27.699 s/op
+# Warmup Iteration   4: 27.695 s/op
+# Warmup Iteration   5: 27.701 s/op
+Iteration   1: 27.711 s/op
+Iteration   2: 27.696 s/op
+Iteration   3: 27.709 s/op
+Iteration   4: 27.690 s/op
+Iteration   5: 27.699 s/op
+Iteration   6: 27.705 s/op
+Iteration   7: 27.689 s/op
+Iteration   8: 27.692 s/op
+Iteration   9: 27.706 s/op
+Iteration  10: 27.708 s/op
+
+
+Result: 27.701 ñ(99.9%) 0.013 s/op [Average]
+  Statistics: (min, avg, max) = (27.689, 27.701, 27.711), stdev = 0.008
+  Confidence interval (99.9%): [27.688, 27.713]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testBlockingOnFJP
+# Parameters: (COMPUTE_RUNS = 4, IO_RUNS = 8)
+
+# Run progress: 40.74% complete, ETA 02:04:58
+# Fork: 1 of 1
+# Warmup Iteration   1: 58.032 s/op
+# Warmup Iteration   2: 56.744 s/op
+# Warmup Iteration   3: 57.382 s/op
+# Warmup Iteration   4: 57.173 s/op
+# Warmup Iteration   5: 56.938 s/op
+Iteration   1: 57.348 s/op
+Iteration   2: 56.967 s/op
+Iteration   3: 57.200 s/op
+Iteration   4: 57.227 s/op
+Iteration   5: 56.997 s/op
+Iteration   6: 56.700 s/op
+Iteration   7: 57.897 s/op
+Iteration   8: 57.131 s/op
+Iteration   9: 56.716 s/op
+Iteration  10: 57.588 s/op
+
+
+Result: 57.177 ñ(99.9%) 0.561 s/op [Average]
+  Statistics: (min, avg, max) = (56.700, 57.177, 57.897), stdev = 0.371
+  Confidence interval (99.9%): [56.617, 57.738]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testBlockingOnFJP
+# Parameters: (COMPUTE_RUNS = 8, IO_RUNS = 2)
+
+# Run progress: 44.44% complete, ETA 02:05:17
+# Fork: 1 of 1
+# Warmup Iteration   1: 17.107 s/op
+# Warmup Iteration   2: 16.896 s/op
+# Warmup Iteration   3: 16.656 s/op
+# Warmup Iteration   4: 16.884 s/op
+# Warmup Iteration   5: 17.037 s/op
+Iteration   1: 17.022 s/op
+Iteration   2: 16.868 s/op
+Iteration   3: 16.745 s/op
+Iteration   4: 17.011 s/op
+Iteration   5: 16.706 s/op
+Iteration   6: 16.977 s/op
+Iteration   7: 16.668 s/op
+Iteration   8: 16.850 s/op
+Iteration   9: 16.966 s/op
+Iteration  10: 17.040 s/op
+
+
+Result: 16.885 ñ(99.9%) 0.210 s/op [Average]
+  Statistics: (min, avg, max) = (16.668, 16.885, 17.040), stdev = 0.139
+  Confidence interval (99.9%): [16.675, 17.095]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testBlockingOnFJP
+# Parameters: (COMPUTE_RUNS = 8, IO_RUNS = 4)
+
+# Run progress: 48.15% complete, ETA 01:52:29
+# Fork: 1 of 1
+# Warmup Iteration   1: 28.048 s/op
+# Warmup Iteration   2: 27.919 s/op
+# Warmup Iteration   3: 27.924 s/op
+# Warmup Iteration   4: 27.937 s/op
+# Warmup Iteration   5: 27.909 s/op
+Iteration   1: 27.919 s/op
+Iteration   2: 27.980 s/op
+Iteration   3: 27.955 s/op
+Iteration   4: 27.988 s/op
+Iteration   5: 27.936 s/op
+Iteration   6: 27.914 s/op
+Iteration   7: 27.937 s/op
+Iteration   8: 27.994 s/op
+Iteration   9: 27.927 s/op
+Iteration  10: 27.923 s/op
+
+
+Result: 27.947 ñ(99.9%) 0.046 s/op [Average]
+  Statistics: (min, avg, max) = (27.914, 27.947, 27.994), stdev = 0.030
+  Confidence interval (99.9%): [27.902, 27.993]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testBlockingOnFJP
+# Parameters: (COMPUTE_RUNS = 8, IO_RUNS = 8)
+
+# Run progress: 51.85% complete, ETA 01:43:29
+# Fork: 1 of 1
+# Warmup Iteration   1: 57.472 s/op
+# Warmup Iteration   2: 56.866 s/op
+# Warmup Iteration   3: 56.998 s/op
+# Warmup Iteration   4: 56.873 s/op
+# Warmup Iteration   5: 57.264 s/op
+Iteration   1: 56.804 s/op
+Iteration   2: 56.869 s/op
+Iteration   3: 57.070 s/op
+Iteration   4: 56.783 s/op
+Iteration   5: 56.818 s/op
+Iteration   6: 56.884 s/op
+Iteration   7: 56.911 s/op
+Iteration   8: 57.022 s/op
+Iteration   9: 56.984 s/op
+Iteration  10: 56.829 s/op
+
+
+Result: 56.898 ñ(99.9%) 0.148 s/op [Average]
+  Statistics: (min, avg, max) = (56.783, 56.898, 57.070), stdev = 0.098
+  Confidence interval (99.9%): [56.749, 57.046]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testBlockingOnFJP
+# Parameters: (COMPUTE_RUNS = 16, IO_RUNS = 2)
+
+# Run progress: 55.56% complete, ETA 01:40:33
+# Fork: 1 of 1
+# Warmup Iteration   1: 17.606 s/op
+# Warmup Iteration   2: 17.475 s/op
+# Warmup Iteration   3: 17.514 s/op
+# Warmup Iteration   4: 17.235 s/op
+# Warmup Iteration   5: 17.121 s/op
+Iteration   1: 17.492 s/op
+Iteration   2: 17.513 s/op
+Iteration   3: 17.261 s/op
+Iteration   4: 17.531 s/op
+Iteration   5: 16.983 s/op
+Iteration   6: 17.416 s/op
+Iteration   7: 17.663 s/op
+Iteration   8: 17.527 s/op
+Iteration   9: 17.233 s/op
+Iteration  10: 17.177 s/op
+
+
+Result: 17.380 ñ(99.9%) 0.315 s/op [Average]
+  Statistics: (min, avg, max) = (16.983, 17.380, 17.663), stdev = 0.208
+  Confidence interval (99.9%): [17.065, 17.694]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testBlockingOnFJP
+# Parameters: (COMPUTE_RUNS = 16, IO_RUNS = 4)
+
+# Run progress: 59.26% complete, ETA 01:29:24
+# Fork: 1 of 1
+# Warmup Iteration   1: 28.480 s/op
+# Warmup Iteration   2: 28.351 s/op
+# Warmup Iteration   3: 28.379 s/op
+# Warmup Iteration   4: 28.359 s/op
+# Warmup Iteration   5: 28.346 s/op
+Iteration   1: 28.427 s/op
+Iteration   2: 28.384 s/op
+Iteration   3: 28.379 s/op
+Iteration   4: 28.385 s/op
+Iteration   5: 28.374 s/op
+Iteration   6: 28.409 s/op
+Iteration   7: 28.393 s/op
+Iteration   8: 28.381 s/op
+Iteration   9: 28.401 s/op
+Iteration  10: 28.344 s/op
+
+
+Result: 28.388 ñ(99.9%) 0.034 s/op [Average]
+  Statistics: (min, avg, max) = (28.344, 28.388, 28.427), stdev = 0.022
+  Confidence interval (99.9%): [28.354, 28.421]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testBlockingOnFJP
+# Parameters: (COMPUTE_RUNS = 16, IO_RUNS = 8)
+
+# Run progress: 62.96% complete, ETA 01:20:41
+# Fork: 1 of 1
+# Warmup Iteration   1: 57.388 s/op
+# Warmup Iteration   2: 57.549 s/op
+# Warmup Iteration   3: 57.455 s/op
+# Warmup Iteration   4: 57.167 s/op
+# Warmup Iteration   5: 57.268 s/op
+Iteration   1: 57.932 s/op
+Iteration   2: 57.484 s/op
+Iteration   3: 57.158 s/op
+Iteration   4: 57.391 s/op
+Iteration   5: 57.225 s/op
+Iteration   6: 57.220 s/op
+Iteration   7: 57.177 s/op
+Iteration   8: 57.160 s/op
+Iteration   9: 57.572 s/op
+Iteration  10: 57.945 s/op
+
+
+Result: 57.426 ñ(99.9%) 0.462 s/op [Average]
+  Statistics: (min, avg, max) = (57.158, 57.426, 57.945), stdev = 0.305
+  Confidence interval (99.9%): [56.965, 57.888]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testFiberChannel
+# Parameters: (COMPUTE_RUNS = 4, IO_RUNS = 2)
+
+# Run progress: 66.67% complete, ETA 01:15:45
+# Fork: 1 of 1
+# Warmup Iteration   1: 16.720 s/op
+# Warmup Iteration   2: 16.533 s/op
+# Warmup Iteration   3: 16.337 s/op
+# Warmup Iteration   4: 16.428 s/op
+# Warmup Iteration   5: 16.560 s/op
+Iteration   1: 16.890 s/op
+Iteration   2: 16.527 s/op
+Iteration   3: 16.759 s/op
+Iteration   4: 16.478 s/op
+Iteration   5: 16.465 s/op
+Iteration   6: 16.387 s/op
+Iteration   7: 16.668 s/op
+Iteration   8: 16.350 s/op
+Iteration   9: 16.664 s/op
+Iteration  10: 16.512 s/op
+
+
+Result: 16.570 ñ(99.9%) 0.259 s/op [Average]
+  Statistics: (min, avg, max) = (16.350, 16.570, 16.890), stdev = 0.171
+  Confidence interval (99.9%): [16.311, 16.829]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testFiberChannel
+# Parameters: (COMPUTE_RUNS = 4, IO_RUNS = 4)
+
+# Run progress: 70.37% complete, ETA 01:05:32
+# Fork: 1 of 1
+# Warmup Iteration   1: 28.041 s/op
+# Warmup Iteration   2: 27.705 s/op
+# Warmup Iteration   3: 27.697 s/op
+# Warmup Iteration   4: 27.707 s/op
+# Warmup Iteration   5: 27.707 s/op
+Iteration   1: 27.709 s/op
+Iteration   2: 27.703 s/op
+Iteration   3: 27.700 s/op
+Iteration   4: 27.701 s/op
+Iteration   5: 27.720 s/op
+Iteration   6: 27.727 s/op
+Iteration   7: 27.714 s/op
+Iteration   8: 27.705 s/op
+Iteration   9: 27.704 s/op
+Iteration  10: 27.712 s/op
+
+
+Result: 27.710 ñ(99.9%) 0.013 s/op [Average]
+  Statistics: (min, avg, max) = (27.700, 27.710, 27.727), stdev = 0.009
+  Confidence interval (99.9%): [27.697, 27.723]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testFiberChannel
+# Parameters: (COMPUTE_RUNS = 4, IO_RUNS = 8)
+
+# Run progress: 74.07% complete, ETA 00:56:54
+# Fork: 1 of 1
+# Warmup Iteration   1: 55.643 s/op
+# Warmup Iteration   2: 55.240 s/op
+# Warmup Iteration   3: 55.175 s/op
+# Warmup Iteration   4: 55.209 s/op
+# Warmup Iteration   5: 55.258 s/op
+Iteration   1: 55.304 s/op
+Iteration   2: 55.302 s/op
+Iteration   3: 55.283 s/op
+Iteration   4: 55.442 s/op
+Iteration   5: 55.276 s/op
+Iteration   6: 55.245 s/op
+Iteration   7: 55.376 s/op
+Iteration   8: 55.208 s/op
+Iteration   9: 55.247 s/op
+Iteration  10: 55.680 s/op
+
+
+Result: 55.336 ñ(99.9%) 0.209 s/op [Average]
+  Statistics: (min, avg, max) = (55.208, 55.336, 55.680), stdev = 0.138
+  Confidence interval (99.9%): [55.127, 55.545]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testFiberChannel
+# Parameters: (COMPUTE_RUNS = 8, IO_RUNS = 2)
+
+# Run progress: 77.78% complete, ETA 00:50:24
+# Fork: 1 of 1
+# Warmup Iteration   1: 17.683 s/op
+# Warmup Iteration   2: 17.365 s/op
+# Warmup Iteration   3: 17.457 s/op
+# Warmup Iteration   4: 17.552 s/op
+# Warmup Iteration   5: 17.745 s/op
+Iteration   1: 17.411 s/op
+Iteration   2: 17.222 s/op
+Iteration   3: 17.423 s/op
+Iteration   4: 17.127 s/op
+Iteration   5: 17.263 s/op
+Iteration   6: 17.222 s/op
+Iteration   7: 17.125 s/op
+Iteration   8: 17.315 s/op
+Iteration   9: 17.491 s/op
+Iteration  10: 17.166 s/op
+
+
+Result: 17.277 ñ(99.9%) 0.196 s/op [Average]
+  Statistics: (min, avg, max) = (17.125, 17.277, 17.491), stdev = 0.129
+  Confidence interval (99.9%): [17.081, 17.472]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testFiberChannel
+# Parameters: (COMPUTE_RUNS = 8, IO_RUNS = 4)
+
+# Run progress: 81.48% complete, ETA 00:41:05
+# Fork: 1 of 1
+# Warmup Iteration   1: 28.270 s/op
+# Warmup Iteration   2: 27.962 s/op
+# Warmup Iteration   3: 27.936 s/op
+# Warmup Iteration   4: 27.953 s/op
+# Warmup Iteration   5: 27.918 s/op
+Iteration   1: 27.932 s/op
+Iteration   2: 27.925 s/op
+Iteration   3: 27.961 s/op
+Iteration   4: 27.952 s/op
+Iteration   5: 27.924 s/op
+Iteration   6: 27.924 s/op
+Iteration   7: 27.943 s/op
+Iteration   8: 27.941 s/op
+Iteration   9: 27.924 s/op
+Iteration  10: 27.913 s/op
+
+
+Result: 27.934 ñ(99.9%) 0.023 s/op [Average]
+  Statistics: (min, avg, max) = (27.913, 27.934, 27.961), stdev = 0.015
+  Confidence interval (99.9%): [27.911, 27.957]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testFiberChannel
+# Parameters: (COMPUTE_RUNS = 8, IO_RUNS = 8)
+
+# Run progress: 85.19% complete, ETA 00:32:39
+# Fork: 1 of 1
+# Warmup Iteration   1: 55.768 s/op
+# Warmup Iteration   2: 55.520 s/op
+# Warmup Iteration   3: 55.515 s/op
+# Warmup Iteration   4: 56.114 s/op
+# Warmup Iteration   5: 56.485 s/op
+Iteration   1: 56.269 s/op
+Iteration   2: 55.618 s/op
+Iteration   3: 55.514 s/op
+Iteration   4: 55.512 s/op
+Iteration   5: 55.615 s/op
+Iteration   6: 55.462 s/op
+Iteration   7: 55.511 s/op
+Iteration   8: 55.471 s/op
+Iteration   9: 55.515 s/op
+Iteration  10: 55.537 s/op
+
+
+Result: 55.602 ñ(99.9%) 0.362 s/op [Average]
+  Statistics: (min, avg, max) = (55.462, 55.602, 56.269), stdev = 0.240
+  Confidence interval (99.9%): [55.240, 55.965]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testFiberChannel
+# Parameters: (COMPUTE_RUNS = 16, IO_RUNS = 2)
+
+# Run progress: 88.89% complete, ETA 00:25:12
+# Fork: 1 of 1
+# Warmup Iteration   1: 17.404 s/op
+# Warmup Iteration   2: 17.197 s/op
+# Warmup Iteration   3: 17.351 s/op
+# Warmup Iteration   4: 17.598 s/op
+# Warmup Iteration   5: 17.186 s/op
+Iteration   1: 17.565 s/op
+Iteration   2: 17.323 s/op
+Iteration   3: 17.109 s/op
+Iteration   4: 17.229 s/op
+Iteration   5: 17.112 s/op
+Iteration   6: 17.115 s/op
+Iteration   7: 17.218 s/op
+Iteration   8: 17.260 s/op
+Iteration   9: 17.110 s/op
+Iteration  10: 17.190 s/op
+
+
+Result: 17.223 ñ(99.9%) 0.213 s/op [Average]
+  Statistics: (min, avg, max) = (17.109, 17.223, 17.565), stdev = 0.141
+  Confidence interval (99.9%): [17.010, 17.437]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testFiberChannel
+# Parameters: (COMPUTE_RUNS = 16, IO_RUNS = 4)
+
+# Run progress: 92.59% complete, ETA 00:16:29
+# Fork: 1 of 1
+# Warmup Iteration   1: 28.765 s/op
+# Warmup Iteration   2: 28.400 s/op
+# Warmup Iteration   3: 28.427 s/op
+# Warmup Iteration   4: 28.365 s/op
+# Warmup Iteration   5: 28.391 s/op
+Iteration   1: 28.367 s/op
+Iteration   2: 28.380 s/op
+Iteration   3: 28.392 s/op
+Iteration   4: 28.393 s/op
+Iteration   5: 28.390 s/op
+Iteration   6: 28.375 s/op
+Iteration   7: 28.396 s/op
+Iteration   8: 28.385 s/op
+Iteration   9: 28.382 s/op
+Iteration  10: 28.383 s/op
+
+
+Result: 28.384 ñ(99.9%) 0.013 s/op [Average]
+  Statistics: (min, avg, max) = (28.367, 28.384, 28.396), stdev = 0.009
+  Confidence interval (99.9%): [28.371, 28.398]
+
+
+# JMH 1.5 (released 26 days ago)
+# VM invoker: C:\Program Files (x86)\Java\jre1.8.0_31\bin\java.exe
+# VM options: -javaagent:target/dependency/quasar-core-0.6.2-jdk8.jar
+# Warmup: 5 iterations, 1 s each
+# Measurement: 10 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.arienkock.ParallelismBenchmark.testFiberChannel
+# Parameters: (COMPUTE_RUNS = 16, IO_RUNS = 8)
+
+# Run progress: 96.30% complete, ETA 00:08:11
+# Fork: 1 of 1
+# Warmup Iteration   1: 56.260 s/op
+# Warmup Iteration   2: 55.922 s/op
+# Warmup Iteration   3: 55.994 s/op
+# Warmup Iteration   4: 55.882 s/op
+# Warmup Iteration   5: 55.913 s/op
+Iteration   1: 55.853 s/op
+Iteration   2: 55.978 s/op
+Iteration   3: 55.938 s/op
+Iteration   4: 55.869 s/op
+Iteration   5: 55.878 s/op
+Iteration   6: 56.281 s/op
+Iteration   7: 55.859 s/op
+Iteration   8: 55.909 s/op
+Iteration   9: 55.893 s/op
+Iteration  10: 55.888 s/op
+
+
+Result: 55.935 ñ(99.9%) 0.193 s/op [Average]
+  Statistics: (min, avg, max) = (55.853, 55.935, 56.281), stdev = 0.128
+  Confidence interval (99.9%): [55.742, 56.127]
+
+
+# Run complete. Total time: 03:47:09
+
+Benchmark                                   (COMPUTE_RUNS)  (IO_RUNS)  Mode  Cnt   Score    Error  Units
+ParallelismBenchmark.testAsyncChannelOnFJP               4          2  avgt   10  16.141 ñ 12.352   s/op
+ParallelismBenchmark.testAsyncChannelOnFJP               4          4  avgt   10  27.707 ñ  0.010   s/op
+ParallelismBenchmark.testAsyncChannelOnFJP               4          8  avgt   10  55.212 ñ  0.051   s/op
+ParallelismBenchmark.testAsyncChannelOnFJP               8          2  avgt   10  16.185 ñ  8.809   s/op
+ParallelismBenchmark.testAsyncChannelOnFJP               8          4  avgt   10  27.926 ñ  0.025   s/op
+ParallelismBenchmark.testAsyncChannelOnFJP               8          8  avgt   10  55.417 ñ  0.033   s/op
+ParallelismBenchmark.testAsyncChannelOnFJP              16          2  avgt   10  16.528 ñ  9.162   s/op
+ParallelismBenchmark.testAsyncChannelOnFJP              16          4  avgt   10  28.379 ñ  0.046   s/op
+ParallelismBenchmark.testAsyncChannelOnFJP              16          8  avgt   10  55.858 ñ  0.076   s/op
+ParallelismBenchmark.testBlockingOnFJP                   4          2  avgt   10  16.625 ñ  0.208   s/op
+ParallelismBenchmark.testBlockingOnFJP                   4          4  avgt   10  27.701 ñ  0.013   s/op
+ParallelismBenchmark.testBlockingOnFJP                   4          8  avgt   10  57.177 ñ  0.561   s/op
+ParallelismBenchmark.testBlockingOnFJP                   8          2  avgt   10  16.885 ñ  0.210   s/op
+ParallelismBenchmark.testBlockingOnFJP                   8          4  avgt   10  27.947 ñ  0.046   s/op
+ParallelismBenchmark.testBlockingOnFJP                   8          8  avgt   10  56.898 ñ  0.148   s/op
+ParallelismBenchmark.testBlockingOnFJP                  16          2  avgt   10  17.380 ñ  0.315   s/op
+ParallelismBenchmark.testBlockingOnFJP                  16          4  avgt   10  28.388 ñ  0.034   s/op
+ParallelismBenchmark.testBlockingOnFJP                  16          8  avgt   10  57.426 ñ  0.462   s/op
+ParallelismBenchmark.testFiberChannel                    4          2  avgt   10  16.570 ñ  0.259   s/op
+ParallelismBenchmark.testFiberChannel                    4          4  avgt   10  27.710 ñ  0.013   s/op
+ParallelismBenchmark.testFiberChannel                    4          8  avgt   10  55.336 ñ  0.209   s/op
+ParallelismBenchmark.testFiberChannel                    8          2  avgt   10  17.277 ñ  0.196   s/op
+ParallelismBenchmark.testFiberChannel                    8          4  avgt   10  27.934 ñ  0.023   s/op
+ParallelismBenchmark.testFiberChannel                    8          8  avgt   10  55.602 ñ  0.362   s/op
+ParallelismBenchmark.testFiberChannel                   16          2  avgt   10  17.223 ñ  0.213   s/op
+ParallelismBenchmark.testFiberChannel                   16          4  avgt   10  28.384 ñ  0.013   s/op
+ParallelismBenchmark.testFiberChannel                   16          8  avgt   10  55.935 ñ  0.193   s/op
