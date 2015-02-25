@@ -1,0 +1,27 @@
+# Run complete. Total time: 01:29:22
+
+Benchmark                                   (COMPUTE_RUNS)  (IO_RUNS)  Mode  Cnt   Score   Error  Units
+ParallelismBenchmark.testAsyncChannelOnFJP               0          2  avgt   20   1.547 ± 0.167   s/op
+ParallelismBenchmark.testAsyncChannelOnFJP               0          4  avgt   20   2.762 ± 0.006   s/op
+ParallelismBenchmark.testAsyncChannelOnFJP               0          8  avgt   20   5.511 ± 0.005   s/op
+ParallelismBenchmark.testAsyncChannelOnFJP             256          2  avgt   20   9.912 ± 0.173   s/op
+ParallelismBenchmark.testAsyncChannelOnFJP             256          4  avgt   20  11.304 ± 0.104   s/op
+ParallelismBenchmark.testAsyncChannelOnFJP             256          8  avgt   20  13.932 ± 0.076   s/op
+ParallelismBenchmark.testBlockingOnFJP                   0          2  avgt   20   1.750 ± 0.051   s/op
+ParallelismBenchmark.testBlockingOnFJP                   0          4  avgt   20   2.750 ± 0.000   s/op
+ParallelismBenchmark.testBlockingOnFJP                   0          8  avgt   20   5.501 ± 0.001   s/op
+ParallelismBenchmark.testBlockingOnFJP                 256          2  avgt   20  10.442 ± 0.008   s/op
+ParallelismBenchmark.testBlockingOnFJP                 256          4  avgt   20  11.124 ± 0.003   s/op
+ParallelismBenchmark.testBlockingOnFJP                 256          8  avgt   20  13.870 ± 0.001   s/op
+ParallelismBenchmark.testFiberChannel                    0          2  avgt   20   1.607 ± 0.007   s/op
+ParallelismBenchmark.testFiberChannel                    0          4  avgt   20   2.769 ± 0.001   s/op
+ParallelismBenchmark.testFiberChannel                    0          8  avgt   20   5.532 ± 0.013   s/op
+ParallelismBenchmark.testFiberChannel                  256          2  avgt   20  10.070 ± 0.152   s/op
+ParallelismBenchmark.testFiberChannel                  256          4  avgt   20  11.202 ± 0.035   s/op
+ParallelismBenchmark.testFiberChannel                  256          8  avgt   20  14.173 ± 0.018   s/op
+ParallelismBenchmark.testFullBlockingOnFJP               0          2  avgt   20   1.710 ± 0.047   s/op
+ParallelismBenchmark.testFullBlockingOnFJP               0          4  avgt   20   2.750 ± 0.001   s/op
+ParallelismBenchmark.testFullBlockingOnFJP               0          8  avgt   20   5.518 ± 0.009   s/op
+ParallelismBenchmark.testFullBlockingOnFJP             256          2  avgt   20  10.104 ± 0.046   s/op
+ParallelismBenchmark.testFullBlockingOnFJP             256          4  avgt   20  11.133 ± 0.006   s/op
+ParallelismBenchmark.testFullBlockingOnFJP             256          8  avgt   20  13.892 ± 0.011   s/op

@@ -1,42 +1,15 @@
-/*
- * Copyright (c) 2014, Oracle America, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *  * Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- *  * Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- *  * Neither the name of Oracle nor the names of its contributors may be used
- *    to endorse or promote products derived from this software without
- *    specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
- * THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package com.github.arienkock;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.CompletionHandler;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.*;
@@ -48,7 +21,9 @@ import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 
 import co.paralleluniverse.concurrent.forkjoin.MonitoredForkJoinPool;
-import co.paralleluniverse.fibers.*;
+import co.paralleluniverse.fibers.DefaultFiberScheduler;
+import co.paralleluniverse.fibers.Fiber;
+import co.paralleluniverse.fibers.SuspendExecution;
 import co.paralleluniverse.fibers.io.FiberFileChannel;
 import co.paralleluniverse.strands.SuspendableRunnable;
 
@@ -56,14 +31,14 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 @SuppressWarnings("serial")
 @BenchmarkMode(Mode.AverageTime)
-@Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
+@Warmup(iterations = 8, time = 1, timeUnit = TimeUnit.SECONDS)
+@Measurement(iterations = 20, time = 1, timeUnit = TimeUnit.SECONDS)
 @Fork(1)
 @State(Scope.Benchmark)
 public class ParallelismBenchmark {
 
-	private static final int IO_TOKENS = 1_000;
-	private static final int COMPUTE_TOKENS = 25_000_000;
+	private static final int IO_TOKENS = 100;
+	private static final int COMPUTE_TOKENS = 15_000_000;
 	private Charset charset = Charset.forName("UTF-8");
 	private Path [] testFilePaths;
 	private ExecutorService cachedThreadPool;
@@ -132,7 +107,7 @@ public class ParallelismBenchmark {
 		return new SuspendableRunnable() {
 			@Override
 			public void run() throws SuspendExecution {
-				try (FiberFileChannel ch = FiberFileChannel.open((MonitoredForkJoinPool)DefaultFiberScheduler.getInstance().getExecutor(), path, Collections.EMPTY_SET)) {
+				try (FiberFileChannel ch = FiberFileChannel.open((MonitoredForkJoinPool)DefaultFiberScheduler.getInstance().getExecutor(), path, Collections.emptySet())) {
 					ByteBuffer dst = ByteBuffer.allocateDirect(BUFFER_SIZE);
 					for (int read = 0; read >= 0; read = ch.read(dst)) {
 						Blackhole.consumeCPU(read * IO_TOKENS);
@@ -178,7 +153,7 @@ public class ParallelismBenchmark {
 			@Override
 			public void run() {
 				try {
-					AsynchronousFileChannel ch = AsynchronousFileChannel.open(path, Collections.EMPTY_SET, /*fiberFileThreadPool*/ForkJoinPool.commonPool());
+					AsynchronousFileChannel ch = AsynchronousFileChannel.open(path, Collections.emptySet(), /*fiberFileThreadPool*/ForkJoinPool.commonPool());
 					ByteBuffer dst = ByteBuffer.allocateDirect(BUFFER_SIZE);
 					doRead(ch, dst, 0L);
 				} catch (Throwable t) {
@@ -230,7 +205,7 @@ public class ParallelismBenchmark {
 
 	@Benchmark
 	public void testAsyncChannelOnFJP() throws IOException, Exception {
-		ArrayList<ForkJoinTask> list = new ArrayList<ForkJoinTask>();
+		ArrayList<ForkJoinTask<?>> list = new ArrayList<ForkJoinTask<?>>();
 		for (int i = 0; i < IO_RUNS; i++) {
 			list.add(ForkJoinTask.adapt(ioRunnableT(pathForNum(i))).fork());
 		}
@@ -250,7 +225,7 @@ public class ParallelismBenchmark {
 		return new Runnable() {
 			@Override
 			public void run() {
-				try (FileChannel ch = FileChannel.open(path, Collections.EMPTY_SET)) {
+				try (FileChannel ch = FileChannel.open(path, Collections.emptySet())) {
 					ByteBuffer dst = ByteBuffer.allocateDirect(BUFFER_SIZE);
 					while (ch.isOpen()) {
 						ForkJoinPool.managedBlock(blockingRead(ch, dst));
@@ -297,14 +272,14 @@ public class ParallelismBenchmark {
 
 	@Benchmark
 	public void testBlockingOnFJP() throws IOException, Exception {
-		ArrayList<ForkJoinTask> list = new ArrayList<ForkJoinTask>();
+		ArrayList<ForkJoinTask<?>> list = new ArrayList<ForkJoinTask<?>>();
 		for (int i = 0; i < IO_RUNS; i++) {
 			list.add(ForkJoinTask.adapt(ioRunnableTB(pathForNum(i))).fork());
 		}
 		for (int i = 0; i < COMPUTE_RUNS; i++) {
 			list.add(ForkJoinTask.adapt(computeRunnableT).fork());
 		}
-		for (ForkJoinTask f : list) {
+		for (ForkJoinTask<?> f : list) {
 			f.join();
 		}
 	}
@@ -316,7 +291,7 @@ public class ParallelismBenchmark {
 		return new Runnable() {
 			@Override
 			public void run() {
-				try (FileChannel ch = FileChannel.open(path, Collections.EMPTY_SET)) {
+				try (FileChannel ch = FileChannel.open(path, Collections.emptySet())) {
 					ByteBuffer dst = ByteBuffer.allocateDirect(BUFFER_SIZE);
 					int read = 0;
 					while ((read = ch.read(dst)) >= 0) {
@@ -334,14 +309,14 @@ public class ParallelismBenchmark {
 
 	@Benchmark
 	public void testFullBlockingOnFJP() throws IOException, Exception {
-		ArrayList<Future> list = new ArrayList<Future>();
+		ArrayList<Future<?>> list = new ArrayList<Future<?>>();
 		for (int i = 0; i < IO_RUNS; i++) {
 			list.add(cachedThreadPool.submit(ioRunnableTBF(pathForNum(i))));
 		}
 		for (int i = 0; i < COMPUTE_RUNS; i++) {
 			list.add(cachedThreadPool.submit(computeRunnableT));
 		}
-		for (Future f : list) {
+		for (Future<?> f : list) {
 			f.get();
 		}
 	}

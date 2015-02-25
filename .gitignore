@@ -7,5 +7,5 @@ release.properties
 .classpath
 .project
 .settings/
-parallelismbenchmarktestdata.txt
+parallelismbenchmarktestdata*
 quasar-core-*.jar
