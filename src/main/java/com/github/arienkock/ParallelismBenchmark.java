@@ -3,15 +3,10 @@ package com.github.arienkock;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousFileChannel;
-import java.nio.channels.CompletionHandler;
-import java.nio.channels.FileChannel;
+import java.nio.channels.*;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.nio.file.*;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.ForkJoinPool.ManagedBlocker;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,9 +16,7 @@ import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 
 import co.paralleluniverse.concurrent.forkjoin.MonitoredForkJoinPool;
-import co.paralleluniverse.fibers.DefaultFiberScheduler;
-import co.paralleluniverse.fibers.Fiber;
-import co.paralleluniverse.fibers.SuspendExecution;
+import co.paralleluniverse.fibers.*;
 import co.paralleluniverse.fibers.io.FiberFileChannel;
 import co.paralleluniverse.strands.SuspendableRunnable;
 
@@ -31,8 +24,8 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 @SuppressWarnings("serial")
 @BenchmarkMode(Mode.AverageTime)
-@Warmup(iterations = 8, time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 20, time = 1, timeUnit = TimeUnit.SECONDS)
+@Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
+@Measurement(iterations = 15, time = 1, timeUnit = TimeUnit.SECONDS)
 @Fork(1)
 @State(Scope.Benchmark)
 public class ParallelismBenchmark {
@@ -56,9 +49,6 @@ public class ParallelismBenchmark {
 	@Setup
 	public void init() {
 		monitor.set(0);
-		if (cachedThreadPool == null) {
-			cachedThreadPool = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());
-		}
 		if (testFilePaths == null) {
 			testFilePaths = new Path [IO_RUNS];
 			for (int i=0; i<IO_RUNS; i++) {
@@ -97,6 +87,14 @@ public class ParallelismBenchmark {
 			throw new AssertionError("Something is wrong with the implementation. Number of bytes read must be constant for each test.");
 		}
 		testFilePaths = null;
+		Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+		StringBuilder sb = new StringBuilder(System.lineSeparator()).append("Thread dump:").append(System.lineSeparator());
+		for (Iterator<Thread> iterator = threadSet.iterator(); iterator
+				.hasNext();) {
+			Thread thread = iterator.next();
+			sb.append(thread.getName()).append(System.lineSeparator());
+		}
+		System.out.println(sb);
 	}
 
 
@@ -309,6 +307,9 @@ public class ParallelismBenchmark {
 
 	@Benchmark
 	public void testFullBlockingOnFJP() throws IOException, Exception {
+		if (cachedThreadPool == null) {
+			cachedThreadPool = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());
+		}
 		ArrayList<Future<?>> list = new ArrayList<Future<?>>();
 		for (int i = 0; i < IO_RUNS; i++) {
 			list.add(cachedThreadPool.submit(ioRunnableTBF(pathForNum(i))));

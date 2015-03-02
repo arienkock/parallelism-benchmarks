@@ -973,3 +973,9 @@ ParallelismBenchmark.testFiberChannel                    8          8  avgt   10
 ParallelismBenchmark.testFiberChannel                   16          2  avgt   10  17.223 ñ  0.213   s/op
 ParallelismBenchmark.testFiberChannel                   16          4  avgt   10  28.384 ñ  0.013   s/op
 ParallelismBenchmark.testFiberChannel                   16          8  avgt   10  55.935 ñ  0.193   s/op
+
+
+Benchmark                                    (BYTE_COUNT_LIMIT)  (NUM_CLIENTS)  (READ_BUFFER_SIZE)  (SERVER_COUNT)  Mode  Cnt  Score   Error  Units
+FountainSocketBenchmark.fountainFibers                    20480             32                1024              32  avgt   15  2.027 ± 0.056   s/op
+FountainSocketBenchmark.fountainThread                    20480             32                1024              32  avgt   15  1.889 ± 0.089   s/op
+FountainSocketBenchmark.fountainThreadAsync               20480             32                1024              32  avgt   15  3.705 ± 0.090   s/op
